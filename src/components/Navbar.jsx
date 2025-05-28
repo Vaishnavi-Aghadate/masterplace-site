@@ -5,6 +5,8 @@ import { FaUserCircle, FaTimes, FaSearch, FaHome, FaBuilding, FaInfoCircle, FaEn
 import { FiUser, FiMail, FiLock, FiPhone } from 'react-icons/fi';
 import logo from '../assets/logo.jpg';
 import './Navbar.css';
+import CreateListingPopup from './CreateListingPopup';
+import { FaPlus } from 'react-icons/fa';
 import axios from 'axios';
 
 
@@ -18,6 +20,7 @@ const Navbar = () => {
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showRegisterConfirmPassword, setShowRegisterConfirmPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
+  
   const [currentUser, setCurrentUser] = useState(null);
 
   const [loginForm, setLoginForm] = useState({ 
@@ -379,18 +382,21 @@ const Navbar = () => {
                 <span>Contact</span>
               </Link>
             </li>
-             <li className="navbar__auth-buttons">
+            {/* Create Listing button visible to all users */}
+            <li>
+              <button 
+                className="create-listing-btn"
+                onClick={() => setShowCreateListingPopup(true)}
+              >
+                <FaPlus /> Create Listing
+              </button>
+            </li>
+            <li className="navbar__auth-buttons">
               {isLoggedIn && (
-                <button 
-                  className="create-listing-btn"
-                  onClick={() => setShowCreateListingPopup(true)}
-                >
-                  <FaPlus /> Create Listing
-                </button>
+                <Link to="/adminpanel" className="admin-btn">
+                  <i className="fas fa-user-shield">Admin</i> 
+                </Link>
               )}
-              <Link to="/adminpanel" className="admin-btn">
-                <i className="fas fa-user-shield">Admin</i> 
-              </Link>
               {isLoggedIn ? (
                 <div className="profile-dropdown">
                   <button className="profile-btn">
@@ -448,6 +454,20 @@ const Navbar = () => {
                 </button>
               </div>
             </div>
+
+           
+      {showCreateListingPopup && (
+        <CreateListingPopup 
+          onClose={() => setShowCreateListingPopup(false)}
+          currentUser={currentUser}
+          isLoggedIn={isLoggedIn}
+          onLoginRequired={() => {
+            setShowCreateListingPopup(false);
+            setShowAuthPopup(true);
+            setActiveTab('login');
+          }}
+        />
+      )}
 
             {activeTab === 'login' ? (
               <form onSubmit={handleLoginSubmit} className="auth-form" noValidate>
